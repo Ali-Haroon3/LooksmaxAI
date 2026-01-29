@@ -244,6 +244,7 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
         didFinishProcessingPhoto photo: AVCapturePhoto,
         error: Error?
     ) {
+        // Extract data from photo before crossing isolation boundaries
         let imageData = photo.fileDataRepresentation()
         let image = imageData.flatMap { UIImage(data: $0) }
         let captureError = error
