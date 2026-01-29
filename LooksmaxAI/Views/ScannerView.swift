@@ -152,7 +152,7 @@ struct ScannerView: View {
 
         do {
             // Check quality
-            let quality = await VisionAnalyzer.shared.checkImageQuality(image)
+            let quality = VisionAnalyzer.shared.checkImageQuality(image)
             if !quality.isAcceptable {
                 isScanning = false
                 qualityFeedback = quality.feedback
@@ -160,7 +160,7 @@ struct ScannerView: View {
             }
 
             // Analyze face
-            let metrics = try await VisionAnalyzer.shared.analyzeFace(image)
+            let metrics = try VisionAnalyzer.shared.analyzeFace(image)
 
             // Calculate scores
             let result = ScoringEngine.calculateScores(from: metrics, userStats: user)

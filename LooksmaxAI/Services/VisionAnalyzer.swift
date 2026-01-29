@@ -5,6 +5,7 @@ import CoreImage
 
 /// VisionAnalyzer: Processes images using Apple Vision framework
 /// to extract facial landmarks and calculate metrics
+@MainActor
 final class VisionAnalyzer {
 
     // MARK: - Singleton
@@ -42,13 +43,13 @@ final class VisionAnalyzer {
     /// Analyze a face image and extract metrics
     /// - Parameter image: UIImage containing a face
     /// - Returns: FaceMetrics with all calculated values
-    func analyzeFace(_ image: UIImage) async throws -> FaceMetrics {
+    func analyzeFace(_ image: UIImage) throws -> FaceMetrics {
         guard let cgImage = image.cgImage else {
             throw AnalysisError.imageConversionFailed
         }
 
         // Perform face detection with landmarks
-        let observations = try await detectFaceLandmarks(in: cgImage)
+        let observations = try detectFaceLandmarks(in: cgImage)
 
         // Validate single face
         guard !observations.isEmpty else {
@@ -77,32 +78,14 @@ final class VisionAnalyzer {
 
     // MARK: - Face Detection
 
-    private func detectFaceLandmarks(in cgImage: CGImage) async throws -> [VNFaceObservation] {
-        return try await withCheckedThrowingContinuation { continuation in
-            let request = VNDetectFaceLandmarksRequest { request, error in
-                if let error = error {
-                    continuation.resume(throwing: error)
-                    return
-                }
+    private nonisolated func detectFaceLandmarks(in cgImage: CGImage) throws -> [VNFaceObservation] {
+        let request = VNDetectFaceLandmarksRequest()
+        request.revision = VNDetectFaceLandmarksRequestRevision3
 
-                guard let observations = request.results as? [VNFaceObservation] else {
-                    continuation.resume(returning: [])
-                    return
-                }
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+        try handler.perform([request])
 
-                continuation.resume(returning: observations)
-            }
-
-            request.revision = VNDetectFaceLandmarksRequestRevision3
-
-            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-
-            do {
-                try handler.perform([request])
-            } catch {
-                continuation.resume(throwing: error)
-            }
-        }
+        return request.results ?? []
     }
 
     // MARK: - Metrics Extraction
@@ -230,7 +213,7 @@ final class VisionAnalyzer {
     // MARK: - Face Quality Check
 
     /// Check if image quality is suitable for analysis
-    func checkImageQuality(_ image: UIImage) async -> ImageQualityResult {
+    func checkImageQuality(_ image: UIImage) -> ImageQualityResult {
         guard let cgImage = image.cgImage else {
             return ImageQualityResult(isAcceptable: false, issues: ["Invalid image format"])
         }
@@ -274,7 +257,7 @@ final class VisionAnalyzer {
 
         // Try face detection
         do {
-            let observations = try await detectFaceLandmarks(in: cgImage)
+            let observations = try detectFaceLandmarks(in: cgImage)
             if observations.isEmpty {
                 issues.append("No face detected")
             } else if observations.count > 1 {

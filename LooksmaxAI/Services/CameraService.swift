@@ -244,16 +244,19 @@ extension CameraService: AVCapturePhotoCaptureDelegate {
         didFinishProcessingPhoto photo: AVCapturePhoto,
         error: Error?
     ) {
+        let imageData = photo.fileDataRepresentation()
+        let image = imageData.flatMap { UIImage(data: $0) }
+        let captureError = error
+
         Task { @MainActor in
-            if let error = error {
-                self.error = .captureFailure(error)
+            if let captureError = captureError {
+                self.error = .captureFailure(captureError)
                 self.photoContinuation?.resume(returning: nil)
                 self.photoContinuation = nil
                 return
             }
 
-            guard let imageData = photo.fileDataRepresentation(),
-                  let image = UIImage(data: imageData) else {
+            guard let image = image else {
                 self.photoContinuation?.resume(returning: nil)
                 self.photoContinuation = nil
                 return
