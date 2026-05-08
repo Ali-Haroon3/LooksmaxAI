@@ -19,6 +19,11 @@ let package = Package(
             name: "LooksmaxAI",
             path: "LooksmaxAI",
             exclude: ["Info.plist"]
+        ),
+        .testTarget(
+            name: "LooksmaxAITests",
+            dependencies: ["LooksmaxAI"],
+            path: "Tests/LooksmaxAITests"
         )
     ]
 )
