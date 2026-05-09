@@ -9,7 +9,10 @@ struct LooksmaxAIApp: App {
             UserStats.self,
             FaceMetrics.self,
             ScanHistory.self,
-            Recommendation.self
+            Recommendation.self,
+            DailyActivity.self,
+            Achievement.self,
+            HydrationLog.self
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,

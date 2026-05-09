@@ -58,5 +58,11 @@ struct MainTabView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [UserStats.self, FaceMetrics.self, ScanHistory.self, Recommendation.self], inMemory: true)
+        .modelContainer(
+            for: [
+                UserStats.self, FaceMetrics.self, ScanHistory.self, Recommendation.self,
+                DailyActivity.self, Achievement.self, HydrationLog.self
+            ],
+            inMemory: true
+        )
 }

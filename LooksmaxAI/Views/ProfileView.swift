@@ -8,6 +8,7 @@ struct ProfileView: View {
 
     @State private var showEditSheet = false
     @State private var showResetAlert = false
+    @State private var activeSheet: ProfileSheet?
 
     private var user: UserStats? { users.first }
 
@@ -31,6 +32,9 @@ struct ProfileView: View {
                         if let user = user {
                             bodyMetricsSection(user: user)
                         }
+
+                        // Tools
+                        toolsSection
 
                         // App info
                         appInfoSection
@@ -58,6 +62,12 @@ struct ProfileView: View {
             .sheet(isPresented: $showEditSheet) {
                 if let user = user {
                     EditProfileSheet(user: user)
+                }
+            }
+            .sheet(item: $activeSheet) { sheet in
+                switch sheet {
+                case .progress: ComparisonView()
+                case .hydration: HydrationView()
                 }
             }
             .alert("Reset All Data", isPresented: $showResetAlert) {
@@ -258,6 +268,64 @@ struct ProfileView: View {
         return DesignSystem.Colors.error
     }
 
+    // MARK: - Tools Section
+
+    private var toolsSection: some View {
+        VStack(alignment: .leading, spacing: DesignSystem.Spacing.md) {
+            Text("Tools")
+                .font(DesignSystem.Typography.title())
+                .foregroundColor(DesignSystem.Colors.textPrimary)
+
+            VStack(spacing: DesignSystem.Spacing.sm) {
+                toolRow(
+                    icon: "arrow.left.arrow.right",
+                    title: "Progress",
+                    subtitle: "Compare your first and latest scans"
+                ) { activeSheet = .progress }
+
+                toolRow(
+                    icon: "drop.fill",
+                    title: "Hydration",
+                    subtitle: "Track your daily water intake"
+                ) { activeSheet = .hydration }
+            }
+        }
+    }
+
+    private func toolRow(
+        icon: String,
+        title: String,
+        subtitle: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: DesignSystem.Spacing.md) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundColor(DesignSystem.Colors.accentCyan)
+                    .frame(width: 32)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(title)
+                        .font(DesignSystem.Typography.title(15))
+                        .foregroundColor(DesignSystem.Colors.textPrimary)
+                    Text(subtitle)
+                        .font(DesignSystem.Typography.caption(12))
+                        .foregroundColor(DesignSystem.Colors.textSecondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 13))
+                    .foregroundColor(DesignSystem.Colors.textTertiary)
+            }
+            .padding(DesignSystem.Spacing.md)
+            .glassCard(cornerRadius: DesignSystem.CornerRadius.medium)
+        }
+        .buttonStyle(.plain)
+    }
+
     // MARK: - App Info Section
 
     private var appInfoSection: some View {
@@ -327,6 +395,15 @@ struct ProfileView: View {
 
         try? modelContext.save()
     }
+}
+
+// MARK: - Profile Sheets
+
+enum ProfileSheet: Int, Identifiable {
+    case progress
+    case hydration
+
+    var id: Int { rawValue }
 }
 
 // MARK: - Supporting Views
