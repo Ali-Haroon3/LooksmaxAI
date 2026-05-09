@@ -24,6 +24,24 @@ An iOS application that analyzes facial features and body metrics to provide a "
 - Video/photo demonstrations for each routine
 - Progress tracking
 
+### Progress & Insights
+- Metric trends over time (Swift Charts) with moving-average smoothing
+- Before/after comparison of your first and latest scans
+- Streaks, longest streak, and 30-day consistency
+- Tiered achievements (Bronze → Platinum) for consistency and score gains
+- A curated "Tip of the Day" surfaced on the dashboard
+
+### Golden Ratio Analysis
+- φ (phi) harmony scoring across facial proportions
+- Golden-grid overlay rendered on the captured photo
+
+### Hydration & Wellness
+- Daily water-intake tracker with a circular progress ring and quick-add servings
+- Configurable hydration goal
+
+### Sharing
+- Screenshot-ready result card (`ImageRenderer`) and plain-text export
+
 ### Mathematical Analysis
 
 **Midface Ratio:**
@@ -49,6 +67,7 @@ Ideal: Positive tilt (> 0°)
 - **Language:** Swift 6 / SwiftUI
 - **Architecture:** MVVM
 - **Computer Vision:** Apple Vision Framework
+- **Charts:** Swift Charts
 - **Persistence:** SwiftData
 - **Minimum iOS:** 17.0
 
@@ -60,13 +79,24 @@ LooksmaxAI/
 │   ├── UserStats.swift         # User profile and body measurements
 │   ├── FaceMetrics.swift       # Facial landmark measurements
 │   ├── ScanHistory.swift       # Scan results and scores
-│   └── Recommendation.swift    # Improvement recommendations
+│   ├── Recommendation.swift    # Improvement recommendations
+│   ├── ProgressEntry.swift     # Time-series metric points
+│   ├── DailyActivity.swift     # Per-day engagement (streaks)
+│   ├── Achievement.swift       # Unlockable badges
+│   └── HydrationLog.swift      # Daily water intake
 ├── Services/
 │   ├── CameraService.swift     # Camera capture management
 │   ├── VisionAnalyzer.swift    # Vision framework analysis
-│   └── ScoringEngine.swift     # PSL score calculation
+│   ├── ScoringEngine.swift     # PSL score calculation
+│   ├── ProgressTracker.swift   # Trends, moving averages, momentum
+│   ├── StreakTracker.swift     # Streak / consistency math
+│   ├── AchievementEngine.swift # Achievement evaluation
+│   ├── ScanComparison.swift    # Before/after diffing
+│   └── ReportGenerator.swift   # Shareable summaries
 ├── Utilities/
 │   ├── FaceMath.swift          # Mathematical calculations
+│   ├── GoldenRatio.swift       # φ harmony analysis
+│   ├── HapticManager.swift     # Centralized haptics
 │   └── DesignSystem.swift      # UI styling constants
 ├── Views/
 │   ├── ContentView.swift       # Main navigation
@@ -76,11 +106,22 @@ LooksmaxAI/
 │   ├── DashboardView.swift     # The Lab dashboard
 │   ├── RoutineListView.swift   # Routine library
 │   ├── RoutineDetailView.swift # Individual routine details
+│   ├── ComparisonView.swift    # Progress comparison
+│   ├── HydrationView.swift     # Hydration tracker
 │   ├── ProfileView.swift       # User profile management
 │   └── Components/
-│       └── VideoPlayerView.swift
-└── Resources/
-    └── RoutineLibrary.swift    # Routine database
+│       ├── VideoPlayerView.swift
+│       ├── ProgressChartView.swift
+│       ├── MetricTrendRow.swift
+│       ├── PhiMaskOverlay.swift
+│       ├── ShareableCardView.swift
+│       └── TipOfTheDayView.swift
+├── Resources/
+│   ├── RoutineLibrary.swift    # Routine database
+│   ├── AchievementCatalog.swift # Achievement definitions
+│   └── InsightsLibrary.swift   # Daily tips
+└── ../Tests/
+    └── LooksmaxAITests/        # Unit tests (FaceMath, Scoring, Progress)
 ```
 
 ## Setup
